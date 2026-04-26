@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard-style.css">
+</head>
+<body>
+    <div class="navbar">
+        <img src="/assets/logos.png" alt="logos" id="logos">
+        <button class="logout-btn" onclick="logout()">Logout</button> <!-- Copyright FERI UM -->
+    </div>
+
+    <div class="container">
+        <div class="welcome-box">
+            <h1>Welcome, <span id="username"></span>!</h1>
+            <p>You are successfully logged in.</p>
+        </div>
+    </div>
+
+    <div class="potpis">
+        Tarik Čolić April-May 2026 for the course Information Security Fundamentals
+    </div>
+
+    <script>
+        // provjeri da li je logiran korisnik
+        window.addEventListener('load', () => {
+            const username = localStorage.getItem('username');
+            if (!username) {
+                // kad nije logged in prebaci se na login apge
+                window.location.href = 'login.html';
+            } else {
+                // prikaz username-a
+                document.getElementById('username').textContent = username;
+            }
+        });
+
+        function logout() {
+            // ocisti local storage
+            localStorage.removeItem('username');
+            // redirect na login page
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
