@@ -9,10 +9,12 @@ router.post('/register', async (req, res) => {
     try {
         const { username, password, passwordConfirm } = req.body;
 
+        // ako je jedno od polja prazno
         if (!username || !password || !passwordConfirm) {
             return res.status(400).json({ message: 'Please provide all required fields' });
         }
 
+        // ako se prva sifra ne poklapa sa drugom (konfirmacijskom)
         if (password !== passwordConfirm) {
             return res.status(400).json({ message: 'Passwords do not match' });
         }
@@ -25,12 +27,13 @@ router.post('/register', async (req, res) => {
         // provjeri da li vec korisnik postoji
         const [results] = await connection.query('SELECT username FROM users WHERE username = ?', [username]);
 
+        // ako postoji vec jedan korisnik sa istim username-om
         if (results.length > 0) {
             connection.release();
             return res.status(400).json({ message: 'Username is already in use' });
         }
 
-        // new user
+        // kreiranje novog korisnika
         await connection.query('INSERT INTO users SET ?', { username: username, password: hashedPassword });
         connection.release();
 
@@ -43,9 +46,11 @@ router.post('/register', async (req, res) => {
 
 // login ruta
 router.post('/login', async (req, res) => {
+
     try {
         const { username, password } = req.body;
 
+        // ako nije unesen username ili sifra 
         if (!username || !password) {
             return res.status(400).json({ message: 'Please provide username and password' });
         }
@@ -54,6 +59,7 @@ router.post('/login', async (req, res) => {
         const [results] = await connection.query('SELECT password FROM users WHERE username = ?', [username]);
         connection.release();
 
+        // provjeri ako je ista uneseno i ako to nije ta sifra
         if (results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
             return res.status(401).json({ message: 'Username or password is incorrect' });
         }
